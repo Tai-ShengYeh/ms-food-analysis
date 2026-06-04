@@ -3,6 +3,20 @@
 用一份**公開的白酒 GC-MS 代謝體資料**，教兩個化學計量學核心方法：
 **PCA**（非監督探索）與 **PLS-DA**（監督式品種鑑別）。三層遞進：先看影片建直覺 → 看 Python 學「怎麼算」 → 用 Orange 親手拉一遍。
 
+**▶ 線上課程頁：** <https://tai-shengyeh.github.io/ms-food-analysis/>
+**📺 教學影片（YouTube · 不公開）：** [① PCA](https://youtu.be/oVrQgc1Enac) · [② PLS-DA](https://youtu.be/yLKKGEgP8Hw)
+
+## 📚 教學系列 — 化學計量學 × 食品分析
+
+兩門姊妹課程，同一套教學流程（互動網頁 + Python + Orange + 旁白影片）：
+
+| 課程 | 方法 | 資料 | 線上課程頁 | Repo |
+|------|------|------|-----------|------|
+| NIR 近紅外光譜 | PCA 探索 + PLS 定量 | Tecator 肉品 | [課程頁 ↗](https://tai-shengyeh.github.io/chemometrics-teaching/) | [chemometrics-teaching ↗](https://github.com/Tai-ShengYeh/chemometrics-teaching) |
+| **MS 質譜（本課）** | PCA 探索 + PLS-DA 鑑別 | 白酒 GC-MS | [課程頁 ↗](https://tai-shengyeh.github.io/ms-food-analysis/) | 本 repo |
+
+## 交付物
+
 | 交付物 | 路徑 |
 |------|------|
 | 教學網頁（互動課程頁） | `index.html` → `teaching.html` |
