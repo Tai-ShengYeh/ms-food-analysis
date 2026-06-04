@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>PLS-DA — 白酒 GC-MS 品種鑑別</title>
+<script>window.onerror=function(m,s,l){console.error("ERR:",m,"line",l);return false;};</script>
+<style>
+  @font-face{font-family:'GenSeki';src:url('assets/fonts/GenSekiGothic2TW-M.otf') format('opentype');font-weight:500;font-display:block;}
+  @font-face{font-family:'GenSeki';src:url('assets/fonts/GenSekiGothic2TW-B.otf') format('opentype');font-weight:700;font-display:block;}
+  @font-face{font-family:'GenSeki';src:url('assets/fonts/GenSekiGothic2TW-H.otf') format('opentype');font-weight:900;font-display:block;}
+  :root{--paper:#FAF7EE;--card:#F2EDDC;--ink:#1A1A1A;--teal:#0E7C7B;--coral:#E36414;--gold:#C8941F;
+    --fs-hero:clamp(90px,8vw,170px);--fs-title:clamp(50px,5vw,90px);--fs-sub:clamp(32px,3.4vw,62px);--fs-note:clamp(15px,1.7vw,30px);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{width:100%;height:100%;background:var(--ink);color:var(--ink);font-family:'GenSeki',sans-serif;overflow:hidden;user-select:none;}
+  .stage{position:fixed;inset:0;}
+  .slide{position:absolute;inset:0;opacity:0;padding:56px 80px 120px;background:var(--paper);display:flex;flex-direction:column;align-items:flex-start;transition:opacity .6s ease-in-out;pointer-events:none;z-index:1;}
+  .slide.active{opacity:1;z-index:2;}
+  .slide.l5{background:var(--ink);color:var(--paper);align-items:center;justify-content:center;text-align:center;}
+  .slide-title{font-weight:900;font-size:var(--fs-title);color:var(--ink);line-height:1.1;border-left:12px solid var(--coral);padding-left:24px;margin-bottom:10px;}
+  .chapter-chip{position:absolute;top:30px;left:32px;font-size:16px;font-weight:700;color:rgba(26,26,26,.55);z-index:5;}
+  .chapter-chip span{background:var(--coral);color:var(--paper);padding:3px 10px;border-radius:4px;font-weight:900;margin-right:6px;}
+  .slide.l5 .chapter-chip{color:rgba(250,247,238,.45);}
+  .progress-bar{position:absolute;left:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--coral),var(--gold));width:0%;transition:width .1s linear;z-index:99;}
+  .subtitle-container{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:88%;max-width:1560px;padding:11px 26px;border-radius:10px;background:rgba(26,26,26,.92);color:#fff;font-weight:700;font-size:30px;line-height:1.35;text-align:center;z-index:90;}
+  .content-area{width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
+  .fig-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
+  .fig-wrap img{max-width:92%;max-height:72vh;border-radius:14px;background:#fff;box-shadow:0 12px 32px rgba(0,0,0,.12);transform:scale(.985);opacity:0;transition:opacity .7s ease,transform .7s ease;}
+  .slide.active .fig-wrap img{opacity:1;transform:scale(1);} .slide.pop .fig-wrap img{transform:scale(1.012);}
+  .lr-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;width:100%;flex:1;align-items:center;min-height:0;}
+  .lr-grid.img-text{grid-template-columns:1.12fr .88fr;}
+  .lr-grid img{max-width:100%;max-height:66vh;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(0,0,0,.12);justify-self:center;}
+  .lr-col{display:flex;flex-direction:column;justify-content:center;gap:18px;}
+  .lr-col p.note{font-size:28px;color:#55493a;line-height:1.45;font-weight:500;}
+  .cards{display:grid;gap:24px;width:100%;align-content:center;}
+  .card-x{background:var(--card);border:3px solid var(--teal);border-radius:18px;padding:24px 30px;opacity:0;transform:translateY(34px);transition:all .6s cubic-bezier(.175,.885,.32,1.275);}
+  .card-x.coralb{border-color:var(--coral);}
+  .slide.active .card-x{opacity:1;transform:translateY(0);}
+  .card-x.c1{transition-delay:.25s}.card-x.c2{transition-delay:.6s}.card-x.c3{transition-delay:.95s}
+  .card-x .t{font-size:34px;font-weight:900;} .card-x .t.teal{color:var(--teal)} .card-x .t.coral{color:var(--coral)} .card-x .d{font-size:23px;color:#55493a;margin-top:5px;font-weight:500;line-height:1.4;}
+  .concept{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0;}
+  .formula{font-size:60px;font-weight:700;color:var(--ink);font-style:italic;} .formula sub{font-style:normal;} .formula .lab{font-style:normal;font-size:26px;color:var(--coral);font-weight:900;}
+  .cap{font-size:30px;color:#55493a;font-weight:700;text-align:center;}
+  .l5 h1{font-weight:900;font-size:var(--fs-hero);line-height:1.18;letter-spacing:.03em;}
+  .l5 .hl{color:var(--gold);} .l5 .subline{font-size:var(--fs-sub);color:rgba(250,247,238,.82);margin-top:26px;line-height:1.3;}
+  .l5 .sig{margin-top:60px;font-size:22px;letter-spacing:.3em;color:rgba(250,247,238,.4);font-weight:700;}
+  /* P3 dual axes */
+  .axis{stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset .9s ease;}
+  .slide-3.axesgo .pcaAx{stroke-dashoffset:0;transition-delay:.3s}
+  .slide-3.axesgo .plsAx{stroke-dashoffset:0;transition-delay:1.3s}
+  .axlab{opacity:0;transition:opacity .5s ease;}
+  .slide-3.axesgo .la1{opacity:1;transition-delay:.9s} .slide-3.axesgo .la2{opacity:1;transition-delay:1.9s}
+  .dot2{opacity:0;transition:opacity .5s ease;} .slide-3.active .dot2{opacity:1;}
+  /* P6 cv grid */
+  .cvwrap{display:flex;flex-direction:column;gap:12px;}
+  .cvrow{display:flex;align-items:center;gap:9px;opacity:0;transform:translateX(-26px);transition:opacity .5s ease,transform .5s cubic-bezier(.175,.885,.32,1.3);}
+  .slide-6.cvgo .cvrow{opacity:1;transform:none;}
+  .slide-6.cvgo .cr2{transition-delay:.3s}.slide-6.cvgo .cr3{transition-delay:.6s}.slide-6.cvgo .cr4{transition-delay:.9s}.slide-6.cvgo .cr5{transition-delay:1.2s}
+  .cvlab{font-size:22px;font-weight:700;color:#55493a;width:110px;}
+  .cell{width:118px;height:46px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:700;}
+  .cell.test{background:var(--coral);}
+  /* P11 map */
+  .mw{stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset .7s ease;}
+  .slide-11.mapgo .mw{stroke-dashoffset:0;}
+  .mn{opacity:0;transform:scale(.85);transition:opacity .5s,transform .5s cubic-bezier(.175,.885,.32,1.4);}
+  .slide-11.mapgo .mn{opacity:1;transform:scale(1);}
+  .slide-11.mapgo .m2{transition-delay:.4s}.slide-11.mapgo .pu{transition-delay:.9s}.slide-11.mapgo .pd{transition-delay:1.2s}
+  .slide-11.mapgo .ou{transition-delay:1.5s}.slide-11.mapgo .od{transition-delay:1.8s}
+  .start-screen{position:fixed;inset:0;background:var(--ink);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;cursor:pointer;transition:opacity .5s ease;}
+  .start-screen.hidden{opacity:0;pointer-events:none;}
+  .start-screen .title{font-weight:900;font-size:clamp(46px,6vw,100px);color:var(--paper);text-align:center;}
+  .start-screen .title b{color:var(--gold);}
+  .start-screen .play{width:88px;height:88px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);}
+  .start-screen .sub{color:rgba(250,247,238,.55);font-size:21px;letter-spacing:.1em;}
+  /* === bright-white theme === */
+  :root{--paper:#FFFFFF;--cover:#119C9A;}
+  .slide.l5{background:var(--cover);}
+  .l5 .hl{color:#FFDE7A;}
+  .slide.l5 .chapter-chip{color:rgba(255,255,255,.7);}
+  .slide.l5 .chapter-chip span{background:rgba(255,255,255,.92);color:var(--cover);}
+  .start-screen{background:var(--cover);}
+</style>
+</head>
+<body>
+<div class="start-screen" id="startScreen">
+  <div class="title">PLS-<b>DA</b></div>
+  <div class="play"><svg width="26" height="30" viewBox="0 0 24 28"><path d="M2 2 L22 14 L2 26 Z" fill="currentColor"/></svg></div>
+  <div class="sub">教學影片 · 質譜食品分析（二）· 約 4.8 分鐘 · 點擊開始</div>
+</div>
+<div class="stage" id="stage">
+
+  <div class="slide slide-1 l5" data-slide="1">
+    <div class="chapter-chip"><span>01</span> / 13</div>
+    <h1>PLS-<span class="hl">DA</span></h1>
+    <div class="subline">用質譜指紋鑑別葡萄品種</div>
+    <div class="sig">質譜食品分析 · 第二部</div>
+  </div>
+
+  <div class="slide slide-2" data-slide="2">
+    <div class="chapter-chip"><span>02</span> / 13 — 轉折</div>
+    <div class="slide-title">從「探索」到「鑑別」</div>
+    <div class="content-area">
+      <div class="cards" style="grid-template-columns:1fr 1fr;">
+        <div class="card-x c1"><div class="t teal">PCA · 非監督</div><div class="d">只看指紋、不看答案。<br>它「發現」了品種，卻不是為品種而分。</div></div>
+        <div class="card-x coralb c2"><div class="t coral">PLS-DA · 監督</div><div class="d">把品種標籤交給它，<br>要它找出最能分開類別的方向。</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-3" data-slide="3">
+    <div class="chapter-chip"><span>03</span> / 13 — 對比</div>
+    <div class="slide-title">PCA vs PLS-DA：兩種方向</div>
+    <div class="content-area">
+      <div class="concept">
+        <svg width="940" height="420" viewBox="0 0 940 420">
+          <g fill="var(--teal)">
+            <circle class="dot2" cx="400" cy="110" r="10"/><circle class="dot2" cx="420" cy="150" r="10"/>
+            <circle class="dot2" cx="400" cy="190" r="10"/><circle class="dot2" cx="430" cy="230" r="10"/>
+            <circle class="dot2" cx="410" cy="270" r="10"/><circle class="dot2" cx="425" cy="310" r="10"/>
+            <circle class="dot2" cx="445" cy="190" r="10"/><circle class="dot2" cx="390" cy="250" r="10"/>
+          </g>
+          <g fill="var(--coral)">
+            <circle class="dot2" cx="540" cy="110" r="10"/><circle class="dot2" cx="560" cy="150" r="10"/>
+            <circle class="dot2" cx="545" cy="190" r="10"/><circle class="dot2" cx="565" cy="230" r="10"/>
+            <circle class="dot2" cx="550" cy="270" r="10"/><circle class="dot2" cx="560" cy="310" r="10"/>
+            <circle class="dot2" cx="585" cy="190" r="10"/><circle class="dot2" cx="535" cy="250" r="10"/>
+          </g>
+          <line class="axis pcaAx" x1="483" y1="80" x2="483" y2="340" stroke="#7d7464" stroke-width="5"/>
+          <text class="axlab la1" x="500" y="80" font-size="26" font-weight="900" font-family="GenSeki" fill="#5f5648">PCA：追最大分散</text>
+          <line class="axis plsAx" x1="470" y1="210" x2="690" y2="210" stroke="var(--coral)" stroke-width="6"/>
+          <polygon class="axlab la2" points="690,210 666,200 666,220" fill="var(--coral)"/>
+          <text class="axlab la2" x="600" y="185" font-size="26" font-weight="900" font-family="GenSeki" fill="var(--coral)">PLS-DA：對齊分界</text>
+        </svg>
+        <div class="cap">PLS-DA 把軸「轉」去對齊兩類之間的分界，換來更乾淨的分類</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-4" data-slide="4">
+    <div class="chapter-chip"><span>04</span> / 13 — 機制</div>
+    <div class="slide-title">PLS-DA 的想法</div>
+    <div class="content-area">
+      <div class="concept">
+        <div class="formula">max&nbsp; cov( X<i>w</i>,&nbsp; <i>y</i> )&nbsp;&nbsp;<span class="lab">指紋投影 ⟷ 類別</span></div>
+        <div class="cap" style="max-width:1140px;">把品種變成數字標籤 <i>y</i>，找權重 <i>w</i> 讓指紋投影與類別的共變異最大<br>這些新方向叫 <b style="color:var(--coral)">潛在變量 LV</b>——和 PCA 一樣壓縮，但目標是「分類」</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-5" data-slide="5">
+    <div class="chapter-chip"><span>05</span> / 13 — 核心</div>
+    <div class="slide-title">監督式分數：LV1 分開兩品種</div>
+    <div class="fig-wrap"><img src="assets/figures/ms06_plsda_scores.png" alt="plsda scores"></div>
+  </div>
+
+  <div class="slide slide-6" data-slide="6">
+    <div class="chapter-chip"><span>06</span> / 13 — 驗證</div>
+    <div class="slide-title">誠實驗證：交叉驗證</div>
+    <div class="content-area">
+      <div class="concept">
+        <div class="cvwrap">
+          <div class="cvrow cr1"><span class="cvlab">第 1 折</span><span class="cell test">測試</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span></div>
+          <div class="cvrow cr2"><span class="cvlab">第 2 折</span><span class="cell">訓練</span><span class="cell test">測試</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span></div>
+          <div class="cvrow cr3"><span class="cvlab">第 3 折</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell test">測試</span><span class="cell">訓練</span><span class="cell">訓練</span></div>
+          <div class="cvrow cr4"><span class="cvlab">第 4 折</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell test">測試</span><span class="cell">訓練</span></div>
+          <div class="cvrow cr5"><span class="cvlab">第 5 折</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell">訓練</span><span class="cell test">測試</span></div>
+        </div>
+        <div class="cap">每次留一份測試、其餘訓練，輪流五次——訓練與測試分開才誠實</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-7" data-slide="7">
+    <div class="chapter-chip"><span>07</span> / 13 — 選 LV</div>
+    <div class="slide-title">要用幾個潛在變量？</div>
+    <div class="fig-wrap"><img src="assets/figures/ms07_plsda_cv.png" alt="cv curve"></div>
+  </div>
+
+  <div class="slide slide-8" data-slide="8">
+    <div class="chapter-chip"><span>08</span> / 13 — 成績</div>
+    <div class="slide-title">混淆矩陣：誰認錯了？</div>
+    <div class="fig-wrap"><img src="assets/figures/ms08_plsda_confusion.png" alt="confusion"></div>
+  </div>
+
+  <div class="slide slide-9" data-slide="9">
+    <div class="chapter-chip"><span>09</span> / 13 — 化學</div>
+    <div class="content-area">
+      <div class="lr-grid img-text">
+        <img src="assets/figures/ms09_plsda_vip.png" alt="vip">
+        <div class="lr-col">
+          <div class="slide-title" style="font-size:48px;border-color:var(--coral);">哪些代謝物在分類？</div>
+          <p class="note"><b style="color:var(--coral)">VIP</b> 衡量每種代謝物對分類的貢獻。</p>
+          <p class="note">榜首是 <b style="color:var(--teal)">酒石酸、脯胺酸、肌醇</b>——酒最主要的有機酸與胺基酸。全是真實酒化學。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-10" data-slide="10">
+    <div class="chapter-chip"><span>10</span> / 13 — 應用</div>
+    <div class="slide-title">這套方法能做什麼</div>
+    <div class="content-area">
+      <div class="cards" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="card-x c1"><div class="t teal">產地溯源</div><div class="d">橄欖油、咖啡來自哪裡</div></div>
+        <div class="card-x c2"><div class="t teal">品種鑑別</div><div class="d">像這支影片的葡萄品種</div></div>
+        <div class="card-x coralb c3"><div class="t coral">摻偽偵測</div><div class="d">果汁、蜂蜜有沒有摻假</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-11" data-slide="11">
+    <div class="chapter-chip"><span>11</span> / 13 — 收束</div>
+    <div class="slide-title">PCA ↔ PLS-DA 地圖</div>
+    <div class="content-area">
+      <div class="concept">
+        <svg width="1200" height="380" viewBox="0 0 1200 380">
+          <g stroke="#7d7464" stroke-width="4" fill="none">
+            <line class="mw" x1="250" y1="190" x2="330" y2="190"/>
+            <line class="mw" x1="560" y1="190" x2="650" y2="110"/>
+            <line class="mw" x1="560" y1="190" x2="650" y2="270"/>
+          </g>
+          <g font-family="GenSeki" text-anchor="middle">
+            <g class="mn m1"><rect x="70" y="158" width="180" height="64" rx="14" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/><text x="160" y="198" font-size="26" font-weight="900" fill="var(--ink)">質譜指紋</text></g>
+            <g class="mn m2"><rect x="330" y="158" width="230" height="64" rx="14" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/><text x="445" y="198" font-size="25" font-weight="900" fill="var(--ink)">前處理（共用）</text></g>
+            <g class="mn pu"><rect x="650" y="78" width="210" height="62" rx="14" fill="#D7ECEB" stroke="var(--teal)" stroke-width="3"/><text x="755" y="116" font-size="25" font-weight="900" fill="var(--ink)">PCA（非監督）</text></g>
+            <g class="mn pd"><rect x="650" y="240" width="210" height="62" rx="14" fill="#FBE9D6" stroke="var(--coral)" stroke-width="3"/><text x="755" y="278" font-size="25" font-weight="900" fill="var(--ink)">PLS-DA（監督）</text></g>
+            <g class="mn ou"><rect x="900" y="78" width="220" height="62" rx="14" fill="var(--card)" stroke="var(--teal)" stroke-width="2"/><text x="1010" y="116" font-size="24" font-weight="900" fill="var(--ink)">探索・找異常</text></g>
+            <g class="mn od"><rect x="900" y="240" width="220" height="62" rx="14" fill="var(--card)" stroke="var(--coral)" stroke-width="2"/><text x="1010" y="278" font-size="24" font-weight="900" fill="var(--ink)">分類・鑑別</text></g>
+          </g>
+          <g stroke="#7d7464" stroke-width="4" fill="none">
+            <line class="mw" x1="860" y1="109" x2="900" y2="109"/>
+            <line class="mw" x1="860" y1="271" x2="900" y2="271"/>
+          </g>
+        </svg>
+        <div class="cap">先用 PCA 探索，再用 PLS-DA 鑑別——食品質譜分析的完整地圖</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide slide-12 l5" data-slide="12">
+    <div class="chapter-chip"><span>12</span> / 13 — 金句</div>
+    <h1>PLS-DA<br><span class="hl">讓質譜指紋<br>說出「這是什麼」</span></h1>
+  </div>
+
+  <div class="slide slide-13 l5" data-slide="13">
+    <div class="chapter-chip"><span>13</span> / 13 — 完</div>
+    <h1 style="font-size:clamp(44px,5vw,82px);">接下來：<span class="hl">用 Orange 親手做</span></h1>
+    <div class="subline">不寫程式，拉一遍 PCA 與 PLS-DA</div>
+    <div class="sig">質譜食品分析 · PLS-DA · 完</div>
+  </div>
+
+</div>
+<div class="subtitle-container" id="subtitle">PLS-DA：讓模型學會鑑別品種</div>
+<div class="progress-bar" id="progress-bar"></div>
+<script>
+const PAGES = [
+  { i: 1, dur: 21, sub: "PLS-DA：讓模型學會鑑別品種" },
+  { i: 2, dur: 25, sub: "PCA 不看答案，PLS-DA 衝著答案去" },
+  { i: 3, dur: 21, sub: "PLS-DA 把軸轉去對齊類別分界" },
+  { i: 4, dur: 23, sub: "找潛在變量 LV，最大化與類別共變異" },
+  { i: 5, dur: 22, sub: "LV1 乾淨地左右分開兩個品種" },
+  { i: 6, dur: 26, sub: "交叉驗證：訓練與測試分開才誠實" },
+  { i: 7, dur: 27, sub: "1 個 LV 已 97%，夠用就好別過擬合" },
+  { i: 8, dur: 22, sub: "對角線全中，兩品種完美區分" },
+  { i: 9, dur: 28, sub: "酒石酸、脯胺酸…都是真實酒化學" },
+  { i: 10, dur: 20, sub: "產地、品種、摻偽——都靠 PLS-DA" },
+  { i: 11, dur: 26, sub: "先用 PCA 探索，再用 PLS-DA 鑑別" },
+  { i: 12, dur: 10, sub: "PLS-DA：讓質譜指紋說出這是什麼" },
+  { i: 13, dur: 16, sub: "接下來：用 Orange 親手做一次" }
+];
+let accum=0; const TIMINGS=PAGES.map(p=>{const s=accum;accum+=p.dur;return{i:p.i,s,e:accum,sub:p.sub};}); const TOTAL_DUR=accum;
+const slideEls=[...document.querySelectorAll('.slide')]; const subtitleEl=document.getElementById('subtitle');
+let progressBar=null; const startScreen=document.getElementById('startScreen');
+const audio=new Audio("renders/master_audio.mp3"); audio.preload="auto";
+let currentIdx=-1,virtualTime=0,lastTickTime=0,useVirtualTimer=false,isPlaying=false;
+const isRenderMode=new URLSearchParams(location.search).get('render')==='true';
+function tick(){
+  if(!isPlaying)return; let t=0;
+  if(useVirtualTimer||isRenderMode){const now=performance.now();if(lastTickTime===0)lastTickTime=now;const dt=(now-lastTickTime)/1000;lastTickTime=now;virtualTime+=dt;t=virtualTime;}
+  else{t=audio.currentTime;if(audio.paused&&t===0&&lastTickTime>0){const now=performance.now();const dt=(now-lastTickTime)/1000;lastTickTime=now;virtualTime+=dt;t=virtualTime;}else{lastTickTime=performance.now();}}
+  const pb=progressBar||(progressBar=document.getElementById('progress-bar')); if(pb)pb.style.width=(Math.min(t/TOTAL_DUR,1)*100)+'%';
+  const idx=TIMINGS.findIndex(p=>t>=p.s&&t<p.e);
+  if(idx!==-1&&idx!==currentIdx){slideEls.forEach((el,i)=>el.classList.toggle('active',i===idx));subtitleEl.textContent=TIMINGS[idx].sub;currentIdx=idx;resetSlideAnimations();}
+  if(currentIdx!==-1){updateSlideInternalAnimations(currentIdx+1,t-TIMINGS[currentIdx].s);}
+  if(t>=TOTAL_DUR){isPlaying=false;audio.pause();slideEls.forEach(el=>el.classList.remove('active'));slideEls[slideEls.length-1].classList.add('active');return;}
+  requestAnimationFrame(tick);
+}
+function resetSlideAnimations(){slideEls.forEach(el=>{el.className='slide slide-'+el.getAttribute('data-slide')+(el.dataset.l5==='1'?' l5':'')+(el.classList.contains('active')?' active':'');});}
+function updateSlideInternalAnimations(n,pageT){const el=slideEls[n-1];
+  if(n===3){if(pageT>=0.6)el.classList.add('axesgo');}
+  else if(n===5){if(pageT>=0.4)el.classList.add('pop');}
+  else if(n===6){if(pageT>=0.4)el.classList.add('cvgo');}
+  else if(n===7){if(pageT>=0.4)el.classList.add('pop');}
+  else if(n===8){if(pageT>=0.4)el.classList.add('pop');}
+  else if(n===11){if(pageT>=0.6)el.classList.add('mapgo');}}
+slideEls.forEach(el=>{if(el.classList.contains('l5'))el.dataset.l5='1';});
+startScreen.addEventListener('click',()=>{startScreen.classList.add('hidden');isPlaying=true;virtualTime=0;lastTickTime=performance.now();audio.currentTime=0;audio.play().catch(()=>{useVirtualTimer=true;});slideEls[0].classList.add('active');currentIdx=0;resetSlideAnimations();requestAnimationFrame(tick);});
+if(isRenderMode){startScreen.style.display='none';startScreen.classList.add('hidden');isPlaying=true;virtualTime=0;useVirtualTimer=true;lastTickTime=performance.now();audio.currentTime=0;setTimeout(()=>{audio.play().catch(()=>{});slideEls[0].classList.add('active');currentIdx=0;resetSlideAnimations();requestAnimationFrame(tick);},200);}
+</script>
+</body>
+</html>

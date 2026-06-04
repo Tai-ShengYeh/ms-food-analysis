@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Wine GC-MS — PCA + classification" description="Mass-spectrometry food analysis teaching workflow on the ST000006 white-wine GC-MS dataset. Top branch = PCA (unsupervised exploration, colour by variety). Bottom branch = supervised classification (Chardonnay vs Sauvignon Blanc) with cross-validated confusion matrix — the Orange counterpart of the video's PLS-DA. Load wine_orange.tab in the File widget.">
+	<nodes>
+		<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="File — wine_orange.tab" position="(60.0, 330.0)" />
+		<node id="1" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(250.0, 160.0)" />
+		<node id="2" name="PCA" qualified_name="Orange.widgets.unsupervised.owpca.OWPCA" project_name="Orange3" version="" title="PCA" position="(250.0, 300.0)" />
+		<node id="3" name="Scatter Plot" qualified_name="Orange.widgets.visualize.owscatterplot.OWScatterPlot" project_name="Orange3" version="" title="Scatter Plot — PCA scores (colour = variety)" position="(470.0, 240.0)" />
+		<node id="4" name="Select Rows" qualified_name="Orange.widgets.data.owselectrows.OWSelectRows" project_name="Orange3" version="" title="Select Rows — Chardonnay or Sauvignon Blanc" position="(250.0, 480.0)" />
+		<node id="5" name="Logistic Regression" qualified_name="Orange.widgets.model.owlogisticregression.OWLogisticRegression" project_name="Orange3" version="" title="Logistic Regression" position="(470.0, 560.0)" />
+		<node id="6" name="Test and Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" version="" title="Test and Score — 5-fold CV" position="(680.0, 470.0)" />
+		<node id="7" name="Confusion Matrix" qualified_name="Orange.widgets.evaluate.owconfusionmatrix.OWConfusionMatrix" project_name="Orange3" version="" title="Confusion Matrix" position="(900.0, 470.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="1" source_node_id="0" sink_node_id="2" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="3" source_channel="Transformed Data" sink_channel="Data" enabled="true" />
+		<link id="3" source_node_id="0" sink_node_id="4" source_channel="Data" sink_channel="Data" enabled="true" />
+		<link id="4" source_node_id="4" sink_node_id="6" source_channel="Matching Data" sink_channel="Data" enabled="true" />
+		<link id="5" source_node_id="5" sink_node_id="6" source_channel="Learner" sink_channel="Learner" enabled="true" />
+		<link id="6" source_node_id="6" sink_node_id="7" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(40.0, 90.0, 230.0, 60.0)" font-family="Helvetica" font-size="16">PCA branch — unsupervised
+explore structure / variety / outliers</text>
+		<text id="1" type="text/plain" rect="(40.0, 640.0, 280.0, 60.0)" font-family="Helvetica" font-size="16">Classification branch — supervised
+Chardonnay vs Sauvignon Blanc (PLS-DA counterpart)</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+	</node_properties>
+</scheme>

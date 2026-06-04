@@ -1,0 +1,8 @@
+# Explore metrics
+n_samples=101
+n_features=108
+raw_min=0
+raw_max=3.321e+06
+dynamic_range_orders=5.07
+varieties=Chardonnay:36, Sauvignon Blanc:18, Pinot gris:12, Riesling:12, Viognier:12, Fume Blanc:6, Elevage Blanc:5
+variety_groups=Chardonnay:36, Sauvignon Blanc:24, Riesling:12, Pinot gris:12, Viognier:12, Elevage Blanc:5

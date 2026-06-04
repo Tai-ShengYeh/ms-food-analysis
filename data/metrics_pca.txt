@@ -1,0 +1,11 @@
+# PCA metrics (log10+autoscale)
+n_outliers=5
+outlier_labels=Fume Blanc, Napa, CA 2004 | Sauvignon Blanc, Lake County, CA 2001 | Sauvignon Blanc, Lake County, CA 2001 | Sauvignon Blanc, Lake County, CA 2001 | Sauvignon Blanc, Lake County, CA 2001
+n_clean=96
+PC1_var=21.97%  cum=21.97%
+PC2_var=13.83%  cum=35.80%
+PC3_var=13.58%  cum=49.38%
+PC4_var=8.53%  cum=57.91%
+PC5_var=6.51%  cum=64.43%
+n_pc_for_80pct=9
+top_PC1_metabolites=threonic acid, threitol, sophorose, 2-hydroxyglutaric acid, inositol myo-, xylitol, putrescine, erythritol

@@ -1,0 +1,12 @@
+# PLS-DA metrics (Chardonnay vs Sauvignon Blanc)
+n_chardonnay=36
+n_sauvblanc=24
+n_total=60
+best_LV=5
+best_cv_accuracy=100.0%
+acc_1LV=96.7%
+acc_2LV=95.0%
+chardonnay_recall=100.0%
+sauvblanc_recall=100.0%
+confusion=[[36,0],[0,24]]
+top_VIP_metabolites=inositol myo-, threitol, proline, tartaric acid, 2-hydroxyglutaric acid, threonic acid, trehalose, ribose, sophorose, putrescine
