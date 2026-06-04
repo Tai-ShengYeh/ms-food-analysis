@@ -6,14 +6,17 @@
 **▶ 線上課程頁：** <https://tai-shengyeh.github.io/ms-food-analysis/>
 **📺 教學影片（YouTube · 不公開）：** [① PCA](https://youtu.be/oVrQgc1Enac) · [② PLS-DA](https://youtu.be/yLKKGEgP8Hw)
 
-## 📚 教學系列 — 化學計量學 × 食品分析
+## 📚 教學系列 — 光譜 × 食品分析（化學計量學）
 
-兩門姊妹課程，同一套教學流程（互動網頁 + Python + Orange + 旁白影片）：
+四門姊妹課程，同一套教學流程（互動網頁 + Python + Orange + 旁白影片）。
+**🏠 課程總入口：** <https://tai-shengyeh.github.io/>
 
-| 課程 | 方法 | 資料 | 線上課程頁 | Repo |
-|------|------|------|-----------|------|
-| NIR 近紅外光譜 | PCA 探索 + PLS 定量 | Tecator 肉品 | [課程頁 ↗](https://tai-shengyeh.github.io/chemometrics-teaching/) | [chemometrics-teaching ↗](https://github.com/Tai-ShengYeh/chemometrics-teaching) |
-| **MS 質譜（本課）** | PCA 探索 + PLS-DA 鑑別 | 白酒 GC-MS | [課程頁 ↗](https://tai-shengyeh.github.io/ms-food-analysis/) | 本 repo |
+| 課程 | 方法 | 資料 / 應用 | 線上課程頁 |
+|------|------|-----------|-----------|
+| NIR 近紅外光譜 | PCA + PLS（定量）| Tecator 肉品 | [課程頁 ↗](https://tai-shengyeh.github.io/chemometrics-teaching/) |
+| **MS 質譜（本課）** | PCA + PLS-DA（鑑別）| 白酒 GC-MS | [課程頁 ↗](https://tai-shengyeh.github.io/ms-food-analysis/) |
+| Raman 拉曼光譜 | 散射光譜 + 化學計量學 | 互動投影片＋小遊戲 | [課程頁 ↗](https://tai-shengyeh.github.io/raman-food-analysis/) |
+| Hyperspectral 高光譜 | 影像光譜 + Orange/Python | SpectroFood 工作流 | [課程頁 ↗](https://tai-shengyeh.github.io/hyperspectral-food-analysis/) |
 
 ## 交付物
 
