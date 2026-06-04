@@ -1,0 +1,2 @@
+﻿Question Title,Item 1,Item 2,Item 3,Item 4,Item 5,Item 6
+PCA 分析流程（由先到後排序）,GC-MS 取得代謝物峰表,log + autoscale 前處理,執行 PCA,看陡坡圖選成分數,分數圖看分群／異常,負荷量回連化學

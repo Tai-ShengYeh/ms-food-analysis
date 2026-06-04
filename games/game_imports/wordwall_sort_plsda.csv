@@ -1,0 +1,2 @@
+﻿Question Title,Item 1,Item 2,Item 3,Item 4,Item 5,Item 6
+建立 PLS-DA 分類模型的步驟（由先到後）,指定類別標籤 y,log + autoscale 前處理,擬合 PLS-DA 取得 LV,交叉驗證選 LV 數,看混淆矩陣評估,用 VIP 找關鍵代謝物
