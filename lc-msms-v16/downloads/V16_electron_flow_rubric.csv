@@ -1,0 +1,8 @@
+criterion,0,1,2,3
+Atom/bond reference,ambiguous,partly mapped,mostly clear,all arrows use correct mapped atoms/bonds
+Electron source,missing,chemically weak,reasonable,source + electron pair rationale
+Arrow target,missing,ambiguous,reasonable,target + expected bond/charge change
+Multiple-arrow coordination,missing,incomplete,mostly correct,all required coupled arrows shown
+Valence/formal charge,ignored,several errors,minor errors,fully tracked
+Formula-tree consistency,inconsistent,partial,balanced,balanced + exact-mass rationale
+Evidence calibration,claims proof,unclear,tentative,observed/proposed/hypothesis clearly separated

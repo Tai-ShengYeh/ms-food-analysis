@@ -1,0 +1,4 @@
+id,name,neutral_formula,canonical_atom_mapped_smiles,mode,precursor,observed_product
+CAF,Caffeine,C8H10N4O2,[CH3:1][n:2]1[cH:3][n:4][c:5]2[c:6]1[c:7](=[O:8])[n:9]([CH3:10])[c:11](=[O:12])[n:13]2[CH3:14],ESI+,[M+H]+ 195.0877,m/z 138.066
+APA,Acetaminophen,C8H9NO2,[CH3:1][C:2](=[O:3])[NH:4][c:5]1[cH:6][cH:7][c:8]([OH:9])[cH:10][cH:11]1,ESI+,[M+H]+ 152.0706,m/z 110.060
+SMZ,Sulfamethazine,C11H13N5O2S,[CH3:1][c:2]1[n:3][c:4]([CH3:19])[n:5][c:6]([NH:8][S:9](=[O:10])(=[O:11])[c:12]2[cH:13][cH:14][c:15]([NH2:18])[cH:16][cH:17]2)[n:7]1,ESI+,[M+H]+ 279.0910,m/z 186.033 / 156.011
